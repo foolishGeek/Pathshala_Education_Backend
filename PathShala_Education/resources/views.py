@@ -43,16 +43,3 @@ def hash_code_generator(size=9, chars=string.ascii_uppercase + string.digits):
     return coupon_code_generated
 
 
-def send_mail_func(**args):
-    to = [args["to"]]
-    message = args["message"]
-    subject = args["subject"]
-    email_from = settings.EMAIL_HOST_USER
-    try:
-        send_mail(subject, message, email_from, to)
-        return True
-    except BadHeaderError:
-        print("Bad header")
-        return False
-    else:
-        return False

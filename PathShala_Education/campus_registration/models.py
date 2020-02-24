@@ -5,9 +5,9 @@ from django.utils.translation import gettext as _
 from django.db import models
 import datetime
 from campus.models import Coordinator, Campus
-from resources.views import send_mail_func
-from resources.views import decrypt_val, encrypt_val
+from resources.views import encrypt_val
 from resources.views import hash_code_generator
+from resources.send_mail import send_mail_with_template
 
 # ----------------------------------------------
 # MARK: Quick Fix: Move to the Utility func
@@ -103,15 +103,11 @@ class RegisteredCourse(models.Model):
         self.send_mail_with_object_model()
         super(RegisteredCourse, self).save(*args, **kwargs)
 
-    # TODO: MARK: Send Mail for this current object created
-    # todo: Modify the Course name sent in the mail.
+    # TODO: Modify the Course name sent in the mail.
     def send_mail_with_object_model(self):
-        mail_to_address = self.student_id.email_id
-        subject_string = "Course Activation Message"
-        message_body = "Hi {}, \nThank you for registering with the {} course.\nHappy Learning! Please find the " \
-                       "secret activation code below for app registration. \n*Please Keep the code secret. \nCourse " \
-                       "Activation ID: {}".format(
-            self.student_id.first_name + " " + self.student_id.last_name, self.course_id,
-            decrypt_val(self.course_activation_id))
-        print("to", mail_to_address, "body:  ", message_body)
-        print(send_mail_func(to=mail_to_address, message=message_body, subject=subject_string))
+        course_detail = {'first_name': self.student_id.first_name, 'last_name': self.student_id.last_name, 'course_name': self.course_id,
+                         'course_activation_id': self.course_activation_id, 'batch_id': self.batch_id, 'username': self.student_id.username,
+                         'email_id': self.student_id.email_id,
+                         }
+        send_mail_with_template(course_detail)
+
