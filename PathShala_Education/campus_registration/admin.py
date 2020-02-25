@@ -33,7 +33,7 @@ class CampusRegistrationAdmin(admin.ModelAdmin):
     inlines = (RegisterCourseInline,)
     readonly_fields = ['is_registered_app', 'coordinator_name']
     list_display = ['username', 'first_name', 'last_name', 'email_id', 'mobile_no']
-    search_fields = ['mobile_no', 'username', 'first_name', 'email']
+    search_fields = ['mobile_no', 'username', 'first_name', 'email_id']
     list_display_links = ['username', 'first_name', 'last_name', 'email_id', 'mobile_no']
 
 

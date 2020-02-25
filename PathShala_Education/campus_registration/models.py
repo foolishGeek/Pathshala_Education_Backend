@@ -5,9 +5,9 @@ from django.utils.translation import gettext as _
 from django.db import models
 import datetime
 from campus.models import Coordinator, Campus
-from resources.views import encrypt_val
-from resources.views import hash_code_generator
+from resources.utility import encrypt_val, hash_code_generator
 from resources.send_mail import send_mail_with_template
+from campus_courses.models import CampusCourse
 
 # ----------------------------------------------
 # MARK: Quick Fix: Move to the Utility func
@@ -21,12 +21,17 @@ def coordinator_name(campus_code):
     print(campus.coordinators.all().first().name)
     return campus.coordinators.all().first().name
 
-COURSE_ID = [
-    ("ID-1", "Course 1"),
-    ("ID-2", "Course 2"),
-    ("ID-3", "Course 3"),
-    ("ID-4", "Course 4"),
-]
+
+def campus_course_list():
+    codes = []
+    names = []
+    lists = CampusCourse.objects.all()
+    for each_course in lists:
+        codes.append(each_course.course_id)
+        names.append(each_course.course_name)
+
+    course_tuple = zip(codes, names)
+    return course_tuple
 
 
 def campus_list():
@@ -40,7 +45,6 @@ def campus_list():
         names.append(eachCampus.campus_name)
 
     campus_tuple = zip(codes, names)
-
     return campus_tuple
 
 
@@ -93,7 +97,7 @@ class RegisteredCourse(models.Model):
                                    verbose_name=_("Campus Student"), on_delete=models.CASCADE, default=None,
                                    db_column="student_id")
     registration_date = models.DateField(_("Registration Date"), default=datetime.date.today)
-    course_id = models.CharField(choices=COURSE_ID, max_length=30)
+    course_id = models.CharField(choices=campus_course_list(), max_length=30)
     batch_id = models.CharField(max_length=32, default=None)
     course_activation_id = models.CharField(max_length=64, default=None)
 
@@ -105,9 +109,12 @@ class RegisteredCourse(models.Model):
 
     # TODO: Modify the Course name sent in the mail.
     def send_mail_with_object_model(self):
-        course_detail = {'first_name': self.student_id.first_name, 'last_name': self.student_id.last_name, 'course_name': self.course_id,
-                         'course_activation_id': self.course_activation_id, 'batch_id': self.batch_id, 'username': self.student_id.username,
+        course_name_dict = dict(campus_course_list())
+        print("Campus Name########", course_name_dict[self.course_id])
+        course_detail = {'first_name': self.student_id.first_name, 'last_name': self.student_id.last_name,
+                         'course_name': course_name_dict[self.course_id],
+                         'course_activation_id': self.course_activation_id, 'batch_id': self.batch_id,
+                         'username': self.student_id.username,
                          'email_id': self.student_id.email_id,
                          }
         send_mail_with_template(course_detail)
-

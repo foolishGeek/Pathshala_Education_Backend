@@ -19,3 +19,7 @@ from django.urls import path
 urlpatterns = [
     path('admin-hash-code/', admin.site.urls),
 ]
+
+admin.site.site_header = 'Pathshala Education'
+admin.site.index_title = 'Welcome Admin, Register your pathshala student in your admin panel'                 # default: "Site administration"
+admin.site.site_title = 'Pathshala Education Admin'

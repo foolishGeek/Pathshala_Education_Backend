@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'campus_registration',
     'campus',
     'resources',
+    'campus_courses',
 ]
 
 MIDDLEWARE = [

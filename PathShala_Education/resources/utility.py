@@ -5,8 +5,6 @@ import random
 import string
 from Crypto.Cipher import AES
 from django.conf import settings
-from django.conf import settings
-from django.core.mail import send_mail, BadHeaderError
 
 
 # Todo: MARK: Encrypt the string/Code.
