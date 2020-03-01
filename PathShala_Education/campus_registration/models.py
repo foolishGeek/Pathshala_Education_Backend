@@ -22,6 +22,8 @@ def coordinator_name(campus_code):
     return campus.coordinators.all().first().name
 
 
+# MARK: This function fetch all the campus available and makes the tuple
+
 def campus_course_list():
     codes = []
     names = []
@@ -33,6 +35,8 @@ def campus_course_list():
     course_tuple = zip(codes, names)
     return course_tuple
 
+
+# MARK: This function fetch all the campus available and makes the tuple
 
 def campus_list():
     codes = []
@@ -56,8 +60,6 @@ def batch_id_gen(batch):
 
 
 # Campus Registration Models for Campus Students @ Admin Mode
-# TODO: add "campus" field that will the be the pk of Campus DB schema.
-# TODO: Automated Field: modify the "coordinator" field to the automated field. fetch the current coordinator name from the cmapus_db pk
 
 class CampusRegistration(models.Model):
     mobile_no = models.CharField(primary_key=True, max_length=10)
@@ -118,3 +120,5 @@ class RegisteredCourse(models.Model):
                          'email_id': self.student_id.email_id,
                          }
         send_mail_with_template(course_detail)
+
+
