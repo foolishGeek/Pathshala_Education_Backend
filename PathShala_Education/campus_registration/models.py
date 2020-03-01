@@ -4,11 +4,14 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.db import models
 import datetime
-from campus.models import Coordinator, Campus
-from resources.utility import encrypt_val, hash_code_generator
-from resources.send_mail import send_mail_with_template
-from campus_courses.models import CampusCourse
 
+from resources.hash_encrypt import encrypt_val, hash_code_generator
+from resources.send_mail import send_mail_with_template
+
+from campus_courses.models import CampusCourse
+from campus.models import Coordinator, Campus
+
+from resources.utility import EmailType as mail_type
 # ----------------------------------------------
 # MARK: Quick Fix: Move to the Utility func
 # Multiple tuple for different coordinator name based on different locations
@@ -112,13 +115,11 @@ class RegisteredCourse(models.Model):
     # TODO: Modify the Course name sent in the mail.
     def send_mail_with_object_model(self):
         course_name_dict = dict(campus_course_list())
-        print("Campus Name########", course_name_dict[self.course_id])
+        print("Campus Name", course_name_dict[self.course_id])
         course_detail = {'first_name': self.student_id.first_name, 'last_name': self.student_id.last_name,
                          'course_name': course_name_dict[self.course_id],
                          'course_activation_id': self.course_activation_id, 'batch_id': self.batch_id,
                          'username': self.student_id.username,
                          'email_id': self.student_id.email_id,
                          }
-        send_mail_with_template(course_detail)
-
-
+        send_mail_with_template(mail_type.REGISTRATION, course_detail)
