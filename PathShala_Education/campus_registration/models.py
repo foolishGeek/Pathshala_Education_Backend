@@ -8,61 +8,23 @@ import datetime
 from resources.hash_encrypt import encrypt_val, hash_code_generator
 from resources.send_mail import send_mail_with_template
 
-from campus_courses.models import CampusCourse
-from campus.models import Coordinator, Campus
-
 from resources.utility import EmailType as mail_type
+
+from .utility import campus_list, coordinator_name, campus_course_list, batch_id_gen, payment_modes
 # ----------------------------------------------
-# MARK: Quick Fix: Move to the Utility func
-# Multiple tuple for different coordinator name based on different locations
-# tuple contains the coordinator id ->(Unique field to the campus DB) and it's corresponding name
-from rest_framework.exceptions import ValidationError
-
-
-def coordinator_name(campus_code):
-    campus = Campus.objects.filter(campus_code=campus_code).first()
-    print(campus.coordinators.all().first().name)
-    return campus.coordinators.all().first().name
-
-
-# MARK: This function fetch all the campus available and makes the tuple
-
-def campus_course_list():
-    codes = []
-    names = []
-    lists = CampusCourse.objects.all()
-    for each_course in lists:
-        codes.append(each_course.course_id)
-        names.append(each_course.course_name)
-
-    course_tuple = zip(codes, names)
-    return course_tuple
-
-
-# MARK: This function fetch all the campus available and makes the tuple
-
-def campus_list():
-    codes = []
-    names = []
-    lists = Campus.objects.all()
-    for eachCampus in lists:
-        print("Campus Code****", eachCampus.campus_code)
-        print("Campus Name****", eachCampus.campus_name)
-        codes.append(eachCampus.campus_code)
-        names.append(eachCampus.campus_name)
-
-    campus_tuple = zip(codes, names)
-    return campus_tuple
-
-
-# -------------------------------------------
-# TODO: Generate batch id func
-
-def batch_id_gen(batch):
-    return batch + "30A"
 
 
 # Campus Registration Models for Campus Students @ Admin Mode
+'''
+---------------------------------
+Schema Description:
+--------------------------------- 
+    -
+    -
+    -
+    -
+---------------------------------  
+'''
 
 class CampusRegistration(models.Model):
     mobile_no = models.CharField(primary_key=True, max_length=10)
@@ -74,6 +36,7 @@ class CampusRegistration(models.Model):
     username = models.CharField(_("Student Username"), max_length=32, blank=False, unique=True)
     campus_id = models.CharField(choices=campus_list(), blank=False, max_length=10, default=None)
     coordinator_name = models.CharField(blank=False, max_length=64, default="")
+    enrollment_id = models.CharField(max_length=32, blank=False, default=None)
 
     def save(self, *args, **kwargs):
         self.coordinator_name = coordinator_name(self.campus_id)
@@ -105,6 +68,10 @@ class RegisteredCourse(models.Model):
     course_id = models.CharField(choices=campus_course_list(), max_length=30)
     batch_id = models.CharField(max_length=32, default=None)
     course_activation_id = models.CharField(max_length=64, default=None)
+    payment_mode = models.CharField(_("Modes of payment"), choices=payment_modes(), default=None, max_length=32)
+    admission_fees_amount = models.IntegerField(blank=False, default=0)
+    fees_status = models.BooleanField(_("Fees Status (Tick if Paid)"), blank=False, default=False)
+    transaction_id = models.CharField(_("Enter the Transaction id (Cash memo number for Cash Mode)"), max_length=234, blank=False, default=None)
 
     def save(self, *args, **kwargs):
         self.batch_id = batch_id_gen(self.course_id)

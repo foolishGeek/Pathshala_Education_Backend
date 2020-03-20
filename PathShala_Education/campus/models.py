@@ -13,6 +13,7 @@ from django.db import models
 class Campus(models.Model):
     campus_name = models.CharField(max_length=64, blank=False, default=None)
     campus_code = models.CharField(max_length=20, blank=False, default=None)
+    # campus_enrollment_no = models.CharField(max_length=32, blank=False, default=None)
 
     def __str__(self):
         return self.campus_name

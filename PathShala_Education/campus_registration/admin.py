@@ -11,7 +11,7 @@ from django.contrib.admin.models import LogEntry
 class RegisterCourseInline(admin.TabularInline):
     model = RegisteredCourse
     extra = 1
-    fields = ('student_id', 'course_id', 'course_activation_id', 'batch_id')
+    fields = ('student_id', 'course_id', 'course_activation_id', 'batch_id', 'payment_mode', 'admission_fees_amount', 'fees_status', 'transaction_id')
     readonly_fields = ['batch_id', 'course_activation_id', ]
     can_delete = False
 
@@ -20,9 +20,9 @@ class RegisterCourseInline(admin.TabularInline):
 
 class RegisterCourseAdmin(admin.ModelAdmin):
     model = RegisteredCourse
-    fields = ('student_id', 'course_id', 'course_activation_id', 'batch_id')
+    fields = ('student_id', 'course_id', 'course_activation_id', 'batch_id', 'payment_mode', 'admission_fees_amount', 'fees_status', 'transaction_id')
     readonly_fields = ['batch_id', 'course_activation_id', ]
-    list_display = ['student_id', 'course_id', 'batch_id']
+    list_display = ['student_id', 'course_id', 'batch_id', 'payment_mode', 'admission_fees_amount', 'fees_status', 'transaction_id']
     search_fields = ['student_id', 'batch_id']
 
 
